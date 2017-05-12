@@ -2,14 +2,14 @@ package com.breezeehr.connect.clj;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.Task;
-import org.apache.kafka.connect.source.SourceConnector;
+import org.apache.kafka.connect.sink.SinkConnector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CljSourceConnector extends SourceConnector {
+public class CljSinkConnector extends SinkConnector {
     private static final ConfigDef CONFIG_DEF = new ConfigDef();
     private Map<String, String> config;
 
@@ -18,7 +18,7 @@ public class CljSourceConnector extends SourceConnector {
     }
 
     public Class<? extends Task> taskClass() {
-        return CljSourceTask.class;
+        return CljSinkTask.class;
     }
 
     public void start(Map<String, String> map) {

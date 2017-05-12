@@ -1,4 +1,4 @@
-package com.breezeehr.connect.clj.cljSourceTask;
+package com.breezeehr.connect.clj;
 
 import org.apache.kafka.connect.errors.ConnectException;
 import org.apache.kafka.connect.errors.RetriableException;
