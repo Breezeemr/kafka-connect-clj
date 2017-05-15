@@ -1,5 +1,7 @@
 package com.breezeehr.connect.clj;
 
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.connect.errors.ConnectException;
 import org.apache.kafka.connect.errors.RetriableException;
 import org.apache.kafka.connect.sink.SinkRecord;
@@ -42,6 +44,11 @@ public class CljSinkTask extends SinkTask {
     public void put(Collection<SinkRecord> records) {
 	putFn.invoke(this, records);
     }
+
+    public void flush(Map<TopicPartition, OffsetAndMetadata> other) {
+        
+    }
+
 
     public synchronized void stop() {
 	if (stopFn != null) {
