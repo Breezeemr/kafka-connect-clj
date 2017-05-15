@@ -17,50 +17,38 @@ import clojure.lang.IFn;
 import clojure.java.api.Clojure;
 
 public class CljSinkTask extends SinkTask {
-    private IFn serviceFn;
-    private IFn destroyFn;
+    private IFn putFn;
+    private IFn stopFn;
     private static IFn REQUIRE = Clojure.var("clojure.core", "require");
     private static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
 
+    public  Object state;
+    
     public String version() {
         return getClass().getPackage().getImplementationVersion();
     }
-
-    // @Override
-    // public void init() {
-    //     // Map config = new HashMap<String, String>();; 
-    //     // IFn initFn = getVar(config, "init");
-    //     // serviceFn = getVar(config, "service");
-    //     // destroyFn = getVar(config, "destroy");
-
-    //     // if (serviceFn == null) {
-    //     //     throw new RetriableException("Missing required parameter 'service'");
-    //     // }
-
-    //     // if (initFn != null) { initFn.invoke(this, config); }
-    // }
     
     public void start(Map<String, String> config) {
-        IFn initFn = getVar(config, "init");
-        serviceFn = getVar(config, "service");
-        destroyFn = getVar(config, "destroy");
-        if (serviceFn == null) {
+        IFn startFn = getVar(config, "clj.start");
+        putFn = getVar(config, "clj.put");
+        stopFn = getVar(config, "clj.stop");
+        if (putFn == null) {
             throw new NoSuchElementException("Missing required parameter 'service'");
         }
 
-        if (initFn != null) { initFn.invoke(this, config); }
+        if (startFn != null) { state = startFn.invoke(this, config); }
 	
     }
 
     public void put(Collection<SinkRecord> records) {
-	serviceFn.invoke(this, records);
+	putFn.invoke(this, records);
     }
 
     public synchronized void stop() {
-	if (destroyFn != null) {
-            destroyFn.invoke(this);
+	if (stopFn != null) {
+            stopFn.invoke(this);
         }
-
+	state = null;
     }
 
     private static IFn getVar(Map<String, String> config, String param)
@@ -90,3 +78,4 @@ public class CljSinkTask extends SinkTask {
     }
 
 }
+ 
