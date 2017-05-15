@@ -40,7 +40,7 @@ public class CljSourceTask extends SourceTask {
     }
 
     public List<SourceRecord> poll() throws InterruptedException {
-	pollFn.invoke(this, records);
+	return (List<SourceRecord>) pollFn.invoke(this);
     }
 
     public synchronized void stop() {
