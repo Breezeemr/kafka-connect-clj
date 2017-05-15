@@ -44,7 +44,4 @@ public class CljSourceConnector extends SourceConnector {
     public ConfigDef config() {
         return CONFIG_DEF;
     }    
-    // public static void main( String[] args ) {
-    //     System.out.println( "Hello World!" );
-    // }
 }

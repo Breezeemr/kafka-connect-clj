@@ -37,7 +37,6 @@ public class CljSinkTask extends SinkTask {
         }
 
         if (startFn != null) { state = startFn.invoke(this, config); }
-	
     }
 
     public void put(Collection<SinkRecord> records) {
