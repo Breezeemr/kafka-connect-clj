@@ -22,11 +22,7 @@ public class CljSinkConnector extends SinkConnector {
     }
 
     public void start(Map<String, String> map) {
-        final String[] setting_keys = {};
-        config = new HashMap<>(setting_keys.length);
-        for (String k : setting_keys) {
-            config.put(k, map.get(k));
-        }
+        config = map;
     }
     
     public List<Map<String, String>> taskConfigs(int maxTasks) {
