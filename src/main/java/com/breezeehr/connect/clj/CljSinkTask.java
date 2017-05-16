@@ -21,6 +21,7 @@ import clojure.java.api.Clojure;
 public class CljSinkTask extends SinkTask {
     private IFn putFn;
     private IFn stopFn;
+    private IFn flushFn;
     private static IFn REQUIRE = Clojure.var("clojure.core", "require");
     private static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
 
@@ -34,6 +35,7 @@ public class CljSinkTask extends SinkTask {
         IFn startFn = getVar(config, "clj.start");
         putFn = getVar(config, "clj.put");
         stopFn = getVar(config, "clj.stop");
+	flushFn = getVar(config, "clj.flush");
         if (putFn == null) {
             throw new NoSuchElementException("Missing required parameter 'service'");
         }
@@ -46,9 +48,8 @@ public class CljSinkTask extends SinkTask {
     }
 
     public void flush(Map<TopicPartition, OffsetAndMetadata> other) {
-        
+        if (flushFn != null) { flushFn.invoke(this, other); }
     }
-
 
     public synchronized void stop() {
 	if (stopFn != null) {

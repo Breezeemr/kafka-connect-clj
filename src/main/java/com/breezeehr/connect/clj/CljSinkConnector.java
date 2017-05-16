@@ -1,6 +1,8 @@
 package com.breezeehr.connect.clj;
 
 import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.config.ConfigDef.Type;
+import org.apache.kafka.common.config.ConfigDef.Importance;
 import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.sink.SinkConnector;
 
@@ -11,6 +13,7 @@ import java.util.Map;
 
 public class CljSinkConnector extends SinkConnector {
     private static final ConfigDef CONFIG_DEF = new ConfigDef();
+
     private Map<String, String> config;
 
     public String version() {
@@ -39,5 +42,5 @@ public class CljSinkConnector extends SinkConnector {
     
     public ConfigDef config() {
         return CONFIG_DEF;
-    }    
+    }
 }
