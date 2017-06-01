@@ -2,6 +2,13 @@
 ### Java template
 # Compiled class file
 *.class
+*.jar
+
+# idea
+/.idea/**
+!/.idea/misc.xml
+!/.idea/runConfigurations
+!/.idea/runConfigurations/*
 
 # Log file
 *.log
@@ -23,3 +30,9 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+# emacs
+[#]*[#]
+.[#]*
+*~
+
+target/

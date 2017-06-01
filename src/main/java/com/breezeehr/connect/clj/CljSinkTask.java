@@ -25,8 +25,8 @@ public class CljSinkTask extends SinkTask {
     private static IFn REQUIRE = Clojure.var("clojure.core", "require");
     private static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
 
-    public  Object state;
-    
+    public Object state;
+
     public String version() {
         return getClass().getPackage().getImplementationVersion();
     }
