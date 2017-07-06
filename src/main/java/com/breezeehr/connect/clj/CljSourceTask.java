@@ -21,7 +21,6 @@ import clojure.java.api.Clojure;
 public class CljSourceTask extends SourceTask {
     private IFn pollFn;
     private IFn stopFn;
-    private IFn flushFn;
     private static IFn REQUIRE = Clojure.var("clojure.core", "require");
     private static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
 
@@ -35,7 +34,6 @@ public class CljSourceTask extends SourceTask {
         IFn startFn = getVar(config, "clj.start");
         pollFn = getVar(config, "clj.poll");
         stopFn = getVar(config, "clj.stop");
-    	flushFn = getVar(config, "clj.flush");
 	if (pollFn == null) {
             throw new NoSuchElementException("Missing required parameter 'service'");
         }
