@@ -25,7 +25,7 @@ public class CljSourceTask extends SourceTask {
     private static IFn REQUIRE = Clojure.var("clojure.core", "require");
     private static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
 
-    public  Object state;
+    public Object state;
 
     public String version() {
         return getClass().getPackage().getImplementationVersion();
@@ -46,10 +46,7 @@ public class CljSourceTask extends SourceTask {
     public List<SourceRecord> poll() throws InterruptedException {
 	return (List<SourceRecord>) pollFn.invoke(this);
     }
-
-    public void flush(Map<TopicPartition, OffsetAndMetadata> other) {
-        if (flushFn != null) { flushFn.invoke(this, other); }
-    }
+    
     
     public synchronized void stop() {
 	if (stopFn != null) {
