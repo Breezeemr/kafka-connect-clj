@@ -32,9 +32,8 @@ public class CljSinkTask extends SinkTask {
         return getClass().getPackage().getImplementationVersion();
     }
 
-    public void initialize(SinkTaskContext context){
-        super.initialize(context);
-        
+    public SinkTaskContext getContext (){
+        return context;
     }
     
     public void start(Map<String, String> config) {

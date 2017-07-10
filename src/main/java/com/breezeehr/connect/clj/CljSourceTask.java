@@ -29,8 +29,8 @@ public class CljSourceTask extends SourceTask {
 
     public Object state;
 
-    public void initialize(SourceTaskContext context){
-      super.initialize(context);
+    public SourceTaskContext getContext( ){
+      return context;
     }
 
     public String version() {
