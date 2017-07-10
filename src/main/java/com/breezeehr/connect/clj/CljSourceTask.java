@@ -17,6 +17,7 @@ import java.util.Map;
 
 import clojure.lang.IFn;
 import clojure.java.api.Clojure;
+import org.apache.kafka.connect.source.SourceTaskContext;
 
 public class CljSourceTask extends SourceTask {
     private IFn pollFn;
@@ -27,6 +28,10 @@ public class CljSourceTask extends SourceTask {
     private static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
 
     public Object state;
+
+    public void initialize(SourceTaskContext context){
+      super.initialize(context);
+    }
 
     public String version() {
         return getClass().getPackage().getImplementationVersion();

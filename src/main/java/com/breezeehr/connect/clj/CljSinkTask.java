@@ -17,6 +17,7 @@ import java.util.Map;
 
 import clojure.lang.IFn;
 import clojure.java.api.Clojure;
+import org.apache.kafka.connect.sink.SinkTaskContext;
 
 public class CljSinkTask extends SinkTask {
     private IFn putFn;
@@ -29,6 +30,11 @@ public class CljSinkTask extends SinkTask {
 
     public String version() {
         return getClass().getPackage().getImplementationVersion();
+    }
+
+    public void initialize(SinkTaskContext context){
+        super.initialize(context);
+        
     }
     
     public void start(Map<String, String> config) {
