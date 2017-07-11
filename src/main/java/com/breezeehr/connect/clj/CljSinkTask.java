@@ -25,6 +25,7 @@ public class CljSinkTask extends SinkTask {
     private IFn flushFn;
     private static IFn REQUIRE = Clojure.var("clojure.core", "require");
     private static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
+    private static IFn KEYWORD = Clojure.var("clojure.core", "keyword");
 
     public Object state;
 
@@ -37,15 +38,17 @@ public class CljSinkTask extends SinkTask {
     }
     
     public void start(Map<String, String> config) {
-        IFn startFn = getVar(config, "clj.start");
-        putFn = getVar(config, "clj.put");
-        stopFn = getVar(config, "clj.stop");
-	flushFn = getVar(config, "clj.flush");
-        if (putFn == null) {
-            throw new NoSuchElementException("Missing required parameter 'service'");
+        Map m = getVar(config);
+        if (m != null){
+            IFn startFn = getFN(m, KEYWORD.invoke("start"));
+            putFn = getFN(m,KEYWORD.invoke("put") );
+            stopFn = getFN(m,KEYWORD.invoke("stop") );
+            flushFn = getFN(m, KEYWORD.invoke("flush"));
+            if (putFn == null) {
+                throw new NoSuchElementException("Missing required parameter 'service'");
+            }
+            if (startFn != null) { state = startFn.invoke(this, config); }
         }
-
-        if (startFn != null) { state = startFn.invoke(this, config); }
     }
 
     public void put(Collection<SinkRecord> records) {
@@ -63,10 +66,17 @@ public class CljSinkTask extends SinkTask {
 	state = null;
     }
 
-    private static IFn getVar(Map<String, String> config, String param)
-        throws NoSuchElementException {
+    private static IFn getFN (Map m, Object param) throws NoSuchElementException {
+        Object item = m.get(param);
+        if (item instanceof IFn ){
+            return (IFn) item;
+        }
+        return null;
+    }
+    private static Map getVar(Map<String, String> config)
+            throws NoSuchElementException {
 
-        String varName = config.get(param);
+        String varName = config.get("clj.impl");
         if (varName == null) { return null; }
 
         String[] parts = varName.split("/", 2);
@@ -82,11 +92,15 @@ public class CljSinkTask extends SinkTask {
             throw new NoSuchElementException("Failed to load namespace '" + namespace + "'");
         }
 
-        IFn fn = Clojure.var(namespace, name);
-        if (fn == null) {
+        Object item = Clojure.var(namespace, name);
+        if (item == null) {
             throw new NoSuchElementException("Var '" + varName + "' not found");
         }
-        return fn;
+        if (item instanceof Map) {
+            return ( Map) item;
+        } else {
+            throw new NoSuchElementException("value at cljs.impl is not a map.");
+        }
     }
 
 }

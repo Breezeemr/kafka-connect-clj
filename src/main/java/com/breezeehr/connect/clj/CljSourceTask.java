@@ -26,6 +26,7 @@ public class CljSourceTask extends SourceTask {
     private IFn commitRecordFn;
     private static IFn REQUIRE = Clojure.var("clojure.core", "require");
     private static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
+    private static IFn KEYWORD = Clojure.var("clojure.core", "keyword");
 
     public Object state;
 
@@ -38,16 +39,18 @@ public class CljSourceTask extends SourceTask {
     }
 
     public void start(Map<String, String> config) {
-        IFn startFn = getVar(config, "clj.start");
-        pollFn = getVar(config, "clj.poll");
-        stopFn = getVar(config, "clj.stop");
-        commitFn = getVar(config, "clj.commit");
-        commitRecordFn = getVar(config, "clj.commitRecord");
-	if (pollFn == null) {
-            throw new NoSuchElementException("Missing required parameter 'service'");
+        Map m = getVar(config);
+        if (m != null){
+            IFn startFn = getFN(m, KEYWORD.invoke("start"));
+            pollFn = getFN(m, KEYWORD.invoke("poll"));
+            stopFn = getFN(m, KEYWORD.invoke("stop"));
+            commitFn = getFN(m, KEYWORD.invoke("commit"));
+            commitRecordFn = getFN(m,KEYWORD.invoke("commitRecord"));
+            if (pollFn == null) {
+                throw new NoSuchElementException("Missing required parameter 'service'");
+            }
+            if (startFn != null) { state = startFn.invoke(this, config); }
         }
-
-        if (startFn != null) { state = startFn.invoke(this, config); }
     }
 
     public List<SourceRecord> poll() throws InterruptedException {
@@ -71,11 +74,17 @@ public class CljSourceTask extends SourceTask {
             commitRecordFn.invoke(this, record);
         }
     }
-
-    private static IFn getVar(Map<String, String> config, String param)
+    private static IFn getFN (Map m, Object param) throws NoSuchElementException {
+        Object item = m.get(param);
+        if (item instanceof IFn ){
+            return (IFn) item;
+        }
+        return null;
+    }
+    private static Map getVar(Map<String, String> config)
         throws NoSuchElementException {
 
-        String varName = config.get(param);
+        String varName = config.get("clj.impl");
         if (varName == null) { return null; }
 
         String[] parts = varName.split("/", 2);
@@ -91,10 +100,14 @@ public class CljSourceTask extends SourceTask {
             throw new NoSuchElementException("Failed to load namespace '" + namespace + "'");
         }
 
-        IFn fn = Clojure.var(namespace, name);
-        if (fn == null) {
+        Object item = Clojure.var(namespace, name);
+        if (item == null) {
             throw new NoSuchElementException("Var '" + varName + "' not found");
         }
-        return fn;
+        if (item instanceof Map) {
+            return ( Map) item;
+        } else {
+            throw new NoSuchElementException("value at cljs.impl is not a map.");
+        }
     }
 }
