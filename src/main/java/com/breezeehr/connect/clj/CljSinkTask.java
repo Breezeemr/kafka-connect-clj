@@ -42,6 +42,7 @@ public class CljSinkTask extends SinkTask {
         if (m != null){
             IFn startFn = getFN(m, KEYWORD.invoke("start"));
             putFn = getFN(m,KEYWORD.invoke("put") );
+            assert null !=putFn;
             stopFn = getFN(m,KEYWORD.invoke("stop") );
             flushFn = getFN(m, KEYWORD.invoke("flush"));
             if (putFn == null) {

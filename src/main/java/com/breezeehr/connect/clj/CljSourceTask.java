@@ -43,6 +43,7 @@ public class CljSourceTask extends SourceTask {
         if (m != null){
             IFn startFn = getFN(m, KEYWORD.invoke("start"));
             pollFn = getFN(m, KEYWORD.invoke("poll"));
+            assert null !=pollFn;
             stopFn = getFN(m, KEYWORD.invoke("stop"));
             commitFn = getFN(m, KEYWORD.invoke("commit"));
             commitRecordFn = getFN(m,KEYWORD.invoke("commitRecord"));
