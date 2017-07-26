@@ -26,6 +26,7 @@ public class CljSinkTask extends SinkTask {
     private static IFn REQUIRE = Clojure.var("clojure.core", "require");
     private static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
     private static IFn KEYWORD = Clojure.var("clojure.core", "keyword");
+    private static IFn DEREF = Clojure.var("clojure.core", "deref");
 
     public Object state;
 
@@ -95,7 +96,7 @@ public class CljSinkTask extends SinkTask {
             throw new NoSuchElementException("Failed to load namespace '" + namespace + "'");
         }
 
-        Object item = Clojure.var(namespace, name);
+        Object item = DEREF.invoke(Clojure.var(namespace, name));
         if (item == null) {
             throw new NoSuchElementException("Var '" + varName + "' not found");
         }
