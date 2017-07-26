@@ -87,7 +87,9 @@ public class CljSourceTask extends SourceTask {
         throws NoSuchElementException {
 
         String varName = config.get("clj.impl");
-        if (varName == null) { return null; }
+        if (varName == null) {
+            throw new NoSuchElementException("Must provide reference to implementation at config key 'clj.impl'" );
+        }
 
         String[] parts = varName.split("/", 2);
         String namespace = parts[0];
