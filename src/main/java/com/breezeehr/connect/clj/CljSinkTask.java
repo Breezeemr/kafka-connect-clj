@@ -39,17 +39,17 @@ public class CljSinkTask extends SinkTask {
     
     public void start(Map<String, String> config) {
         Map m = getVar(config);
-        if (m != null){
-            IFn startFn = getFN(m, KEYWORD.invoke("start"));
-            putFn = getFN(m,KEYWORD.invoke("put") );
-            assert null !=putFn;
-            stopFn = getFN(m,KEYWORD.invoke("stop") );
-            flushFn = getFN(m, KEYWORD.invoke("flush"));
-            if (putFn == null) {
-                throw new NoSuchElementException("Missing required parameter 'service'");
-            }
-            if (startFn != null) { state = startFn.invoke(this, config); }
+        assert m != null;
+        IFn startFn = getFN(m, KEYWORD.invoke("start"));
+        putFn = getFN(m,KEYWORD.invoke("put") );
+        assert null !=putFn;
+        stopFn = getFN(m,KEYWORD.invoke("stop") );
+        flushFn = getFN(m, KEYWORD.invoke("flush"));
+        if (putFn == null) {
+            throw new NoSuchElementException("Missing required parameter 'service'");
         }
+        if (startFn != null) { state = startFn.invoke(this, config); }
+
     }
 
     public void put(Collection<SinkRecord> records) {

@@ -40,18 +40,19 @@ public class CljSourceTask extends SourceTask {
 
     public void start(Map<String, String> config) {
         Map m = getVar(config);
-        if (m != null){
-            IFn startFn = getFN(m, KEYWORD.invoke("start"));
-            pollFn = getFN(m, KEYWORD.invoke("poll"));
-            assert null !=pollFn;
-            stopFn = getFN(m, KEYWORD.invoke("stop"));
-            commitFn = getFN(m, KEYWORD.invoke("commit"));
-            commitRecordFn = getFN(m,KEYWORD.invoke("commitRecord"));
-            if (pollFn == null) {
-                throw new NoSuchElementException("Missing required parameter 'service'");
-            }
-            if (startFn != null) { state = startFn.invoke(this, config); }
+        assert null != m;
+
+        IFn startFn = getFN(m, KEYWORD.invoke("start"));
+        pollFn = getFN(m, KEYWORD.invoke("poll"));
+        assert null != pollFn;
+        stopFn = getFN(m, KEYWORD.invoke("stop"));
+        commitFn = getFN(m, KEYWORD.invoke("commit"));
+        commitRecordFn = getFN(m,KEYWORD.invoke("commitRecord"));
+        if (pollFn == null) {
+            throw new NoSuchElementException("Missing required parameter 'service'");
         }
+        if (startFn != null) { state = startFn.invoke(this, config); }
+
     }
 
     public List<SourceRecord> poll() throws InterruptedException {
