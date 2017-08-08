@@ -93,7 +93,7 @@ public class CljSinkTask extends SinkTask {
         try {
             REQUIRE.invoke(SYMBOL.invoke(namespace));
         } catch(Throwable t) {
-            throw new NoSuchElementException("Failed to load namespace '" + namespace + "'");
+            throw new NoSuchElementException("Failed to load namespace '" + namespace + "'" + t.getMessage());
         }
 
         Object item = DEREF.invoke(Clojure.var(namespace, name));
