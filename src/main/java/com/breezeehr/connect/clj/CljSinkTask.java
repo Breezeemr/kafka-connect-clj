@@ -101,9 +101,9 @@ public class CljSinkTask extends SinkTask {
             throw new NoSuchElementException("Var '" + varName + "' not found");
         }
         if (item instanceof Map) {
-            return ( Map) item;
+            return (Map) item;
         } else {
-            throw new NoSuchElementException("value at cljs.impl is not a map.");
+            throw new NoSuchElementException("value at clj.impl is not a map.");
         }
     }
 
