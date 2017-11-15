@@ -29,6 +29,10 @@ public class CljSourceTask extends SourceTask {
 
     public Object state;
 
+    public SourceTaskContext getContext(){
+      return context;
+    }
+
     public String version() {
         return getClass().getPackage().getImplementationVersion();
     }
