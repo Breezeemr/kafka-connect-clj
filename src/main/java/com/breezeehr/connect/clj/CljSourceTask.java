@@ -19,21 +19,15 @@ import clojure.lang.IFn;
 import clojure.java.api.Clojure;
 import org.apache.kafka.connect.source.SourceTaskContext;
 
+import static com.breezeehr.connect.clj.CljRequirer.*;
+
 public class CljSourceTask extends SourceTask {
     private IFn pollFn;
     private IFn stopFn;
     private IFn commitFn;
     private IFn commitRecordFn;
-    private static IFn REQUIRE = Clojure.var("clojure.core", "require");
-    private static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
-    private static IFn KEYWORD = Clojure.var("clojure.core", "keyword");
-    private static IFn DEREF = Clojure.var("clojure.core", "deref");
 
     public Object state;
-
-    public SourceTaskContext getContext( ){
-      return context;
-    }
 
     public String version() {
         return getClass().getPackage().getImplementationVersion();
@@ -43,17 +37,16 @@ public class CljSourceTask extends SourceTask {
         Map m = getVar(config);
         assert null != m;
 
-        IFn startFn = getFN(m, KEYWORD.invoke("start"));
-        pollFn = getFN(m, KEYWORD.invoke("poll"));
+        IFn startFn = getFN(m, "start" );
+        pollFn = getFN(m, "poll");
         assert null != pollFn;
-        stopFn = getFN(m, KEYWORD.invoke("stop"));
-        commitFn = getFN(m, KEYWORD.invoke("commit"));
-        commitRecordFn = getFN(m,KEYWORD.invoke("commitRecord"));
+        stopFn = getFN(m, "stop");
+        commitFn = getFN(m, "commit");
+        commitRecordFn = getFN(m,"commitRecord");
         if (pollFn == null) {
             throw new NoSuchElementException("Missing required parameter 'service'");
         }
         if (startFn != null) { state = startFn.invoke(this, config); }
-
     }
 
     public List<SourceRecord> poll() throws InterruptedException {
@@ -75,44 +68,6 @@ public class CljSourceTask extends SourceTask {
     public void commitRecord(SourceRecord record) throws InterruptedException {
         if (commitRecordFn != null) {
             commitRecordFn.invoke(this, record);
-        }
-    }
-    private static IFn getFN (Map m, Object param) throws NoSuchElementException {
-        Object item = m.get(param);
-        if (item instanceof IFn ){
-            return (IFn) item;
-        }
-        return null;
-    }
-    private static Map getVar(Map<String, String> config)
-        throws NoSuchElementException {
-
-        String varName = config.get("clj.impl");
-        if (varName == null) {
-            throw new NoSuchElementException("Must provide reference to implementation at config key 'clj.impl'" );
-        }
-
-        String[] parts = varName.split("/", 2);
-        String namespace = parts[0];
-        String name = parts[1];
-        if (namespace == null || name == null) {
-            throw new NoSuchElementException("Invalid namespace-qualified symbol '" + varName + "'");
-        }
-
-        try {
-            REQUIRE.invoke(SYMBOL.invoke(namespace));
-        } catch(Throwable t) {
-            throw new NoSuchElementException("Failed to load namespace '" + namespace + "'");
-        }
-
-        Object item = DEREF.invoke(Clojure.var(namespace, name));
-        if (item == null) {
-            throw new NoSuchElementException("Var '" + varName + "' not found");
-        }
-        if (item instanceof Map) {
-            return ( Map) item;
-        } else {
-            throw new NoSuchElementException("value at clj.impl is not a map.");
         }
     }
 }
