@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 public final class CljRequirer {
-    public static IFn REQUIRE = Clojure.var("clojure.core", "require");
+    public static IFn REQUIRING_RESOLVE = Clojure.var("clojure.core", "requiring-resolve");
     public static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
     public static IFn KEYWORD = Clojure.var("clojure.core", "keyword");
     public static IFn DEREF = Clojure.var("clojure.core", "deref");
@@ -23,29 +23,22 @@ public final class CljRequirer {
             throws NoSuchElementException {
 
         String varName = config.get("clj.impl");
+        Object required_var;
         if (varName == null) {
             throw new NoSuchElementException("Must provide reference to implementation at config key 'clj.impl'" );
         }
-
-        String[] parts = varName.split("/", 2);
-        String namespace = parts[0];
-        String name = parts[1];
-        if (namespace == null || name == null) {
-            throw new NoSuchElementException("Invalid namespace-qualified symbol '" + varName + "'");
-        }
-
         try {
-            REQUIRE.invoke(SYMBOL.invoke(namespace));
+          required_var = REQUIRING_RESOLVE.invoke(SYMBOL.invoke(varName));
         } catch(Throwable t) {
             throw new NoSuchElementException("Failed to load namespace '" + namespace + "'" + t.getMessage());
         }
 
-        Object item = DEREF.invoke(Clojure.var(namespace, name));
-        if (item == null) {
+        Object derefed_item = DEREF.invoke(required_var);
+        if (derefed_item == null) {
             throw new NoSuchElementException("Var '" + varName + "' not found");
         }
-        if (item instanceof Map) {
-            return (Map) item;
+        if (derefed_item instanceof Map) {
+            return (Map) derefed_item;
         } else {
             throw new NoSuchElementException("value at clj.impl is not a map.");
         }
