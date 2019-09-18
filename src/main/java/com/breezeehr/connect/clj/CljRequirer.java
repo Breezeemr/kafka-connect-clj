@@ -30,7 +30,7 @@ public final class CljRequirer {
         try {
           required_var = REQUIRING_RESOLVE.invoke(SYMBOL.invoke(varName));
         } catch(Throwable t) {
-            throw new NoSuchElementException("Failed to load namespace '" + namespace + "'" + t.getMessage());
+            throw new NoSuchElementException("Failed to load namespace '" + varName + "'" + t.getMessage());
         }
 
         Object derefed_item = DEREF.invoke(required_var);
