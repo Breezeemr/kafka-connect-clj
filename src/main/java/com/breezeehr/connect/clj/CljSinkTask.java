@@ -25,6 +25,7 @@ public class CljSinkTask extends SinkTask {
     private IFn putFn;
     private IFn stopFn;
     private IFn flushFn;
+    private IFn preCommitFn;
 
     public Object state;
 
@@ -44,6 +45,7 @@ public class CljSinkTask extends SinkTask {
         assert null !=putFn;
         stopFn = getFN(m,"stop" );
         flushFn = getFN(m, "flush");
+        preCommitFn = getFN(m, "preCommit");
         if (putFn == null) {
             throw new NoSuchElementException("Missing required parameter 'service'");
         }
@@ -53,6 +55,24 @@ public class CljSinkTask extends SinkTask {
 
     public void put(Collection<SinkRecord> records) {
 	putFn.invoke(this, records);
+    }
+
+    public Map<TopicPartition, OffsetAndMetadata> preCommit(Map<TopicPartition,
+        OffsetAndMetadata> currentOffsets) {
+      Map<TopicPartition,
+          OffsetAndMetadata> updatedOffsets;
+      if (preCommitFn != null) {
+        Object temp =preCommitFn.invoke(this, currentOffsets);
+        if (temp instanceof Map){
+          updatedOffsets=(Map) temp;
+        }else {
+          updatedOffsets=currentOffsets;
+        }
+      } else{
+        updatedOffsets=currentOffsets;
+      }
+        flush(updatedOffsets);
+        return updatedOffsets;
     }
 
     public void flush(Map<TopicPartition, OffsetAndMetadata> other) {
