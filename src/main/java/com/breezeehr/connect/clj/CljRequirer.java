@@ -12,10 +12,7 @@ public final class CljRequirer {
     public static IFn KEYWORD = Clojure.var("clojure.core", "keyword");
     public static IFn DEREF = Clojure.var("clojure.core", "deref");
     static {
-      String logns;
-      if (System.getenv("PEDESTAL_LOGGER") != null){
-        logns = System.getenv("PEDESTAL_LOGGER");
-      }
+      String logns = System.getenv("PEDESTAL_LOGGER");
       if (System.getProperty("io.pedestal.log.overrideLogger") != null){
         logns = System.getProperty("io.pedestal.log.overrideLogger");
       }
