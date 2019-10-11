@@ -11,7 +11,22 @@ public final class CljRequirer {
     public static IFn SYMBOL = Clojure.var("clojure.core", "symbol");
     public static IFn KEYWORD = Clojure.var("clojure.core", "keyword");
     public static IFn DEREF = Clojure.var("clojure.core", "deref");
-
+    static {
+      String logns;
+      if (System.getenv("PEDESTAL_LOGGER") != null){
+        logns = System.getenv("PEDESTAL_LOGGER");
+      }
+      if (System.getProperty("io.pedestal.log.overrideLogger") != null){
+        logns = System.getProperty("io.pedestal.log.overrideLogger");
+      }
+      if (logns != null){
+        try {
+          REQUIRING_RESOLVE.invoke(SYMBOL.invoke(logns));
+        } catch(Throwable t) {
+          throw new NoSuchElementException("Failed to load namespace '" + logns + "'" + t.getMessage());
+        }
+      }
+    }
     static IFn getFN (Map m, String param) throws NoSuchElementException {
         Object item = m.get(KEYWORD.invoke(param));
         if (item instanceof IFn ){
