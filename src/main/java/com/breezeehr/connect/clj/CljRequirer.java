@@ -24,14 +24,14 @@ public final class CljRequirer {
         }
       }
     }
-    static IFn getFN (Map m, String param) throws NoSuchElementException {
+    public static IFn getFN (Map m, String param) throws NoSuchElementException {
         Object item = m.get(KEYWORD.invoke(param));
         if (item instanceof IFn ){
             return (IFn) item;
         }
         return null;
     }
-    static synchronized Map getVar(Map<String, String> config)
+    public static synchronized Map getMapVar(Map<String, String> config)
             throws NoSuchElementException {
 
         String varName = config.get("clj.impl");
@@ -55,4 +55,24 @@ public final class CljRequirer {
             throw new NoSuchElementException("value at clj.impl is not a map.");
         }
     }
+  public static synchronized IFn getVar(String sym)
+      throws NoSuchElementException {
+    Object required_var;
+    if (sym == null) {
+      throw new NoSuchElementException("Must provide reference to implementation at config key 'clj.impl'" );
+    }
+    try {
+      required_var = REQUIRING_RESOLVE.invoke(SYMBOL.invoke(sym));
+    } catch(Throwable t) {
+      throw new NoSuchElementException("Failed to load namespace '" + sym + "'" + t.getMessage());
+    }
+    if (required_var == null) {
+      throw new NoSuchElementException("Var '" + sym + "' not found");
+    }
+    if (required_var instanceof IFn) {
+      return (IFn) required_var;
+    } else {
+      throw new NoSuchElementException("var is not Ifn.");
+    }
+  }
 }

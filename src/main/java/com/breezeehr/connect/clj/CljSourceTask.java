@@ -1,22 +1,14 @@
 package com.breezeehr.connect.clj;
 
-import org.apache.kafka.connect.errors.ConnectException;
-import org.apache.kafka.connect.errors.RetriableException;
 import org.apache.kafka.connect.source.SourceRecord;
 import org.apache.kafka.connect.source.SourceTask;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+
 import java.util.NoSuchElementException;
 
 import java.util.List;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.Map;
 
 import clojure.lang.IFn;
-import clojure.java.api.Clojure;
 import org.apache.kafka.connect.source.SourceTaskContext;
 
 import static com.breezeehr.connect.clj.CljRequirer.*;
@@ -38,7 +30,7 @@ public class CljSourceTask extends SourceTask {
     }
 
     public void start(Map<String, String> config) {
-        Map m = getVar(config);
+        Map m = getMapVar(config);
         assert null != m;
 
         IFn startFn = getFN(m, "start" );
