@@ -31,6 +31,18 @@ public final class CljRequirer {
         }
         return null;
     }
+    static IFn getStaticFN (String varName) throws NoSuchElementException {
+        Object required_var;
+        try {
+            required_var = REQUIRING_RESOLVE.invoke(SYMBOL.invoke(varName));
+        } catch(Throwable t) {
+            throw new NoSuchElementException("Failed to load namespace '" + varName + "'" + t.getMessage());
+        }
+        if (required_var instanceof IFn ){
+            return (IFn) required_var;
+        }
+        return null;
+    }
     static synchronized Map getVar(Map<String, String> config)
             throws NoSuchElementException {
 

@@ -4,7 +4,7 @@
   <groupId>com.breezeehr</groupId>
   <artifactId>kafka-connect-clj</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.4-SNAPSHOT</version>
+  <version>0.1.5-SNAPSHOT</version>
   <name>kafka-connect-clj</name>
   <url>http://maven.apache.org</url>
 
@@ -39,8 +39,7 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <kafka.version>0.10.2.1</kafka.version>
-    <jsch.version>0.1.54</jsch.version>
+    <kafka.version>2.6.0</kafka.version>
   </properties>
   
   <dependencies>
